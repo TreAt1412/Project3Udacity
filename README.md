@@ -2,7 +2,19 @@
 
 # Project Starter
 This repository contains the starter code for the **Ensuring Quality Releases** project of the cd1807 Ensuring Quality Releases (Quality Assurance) course taught by Nathan Anderson. 
+# Architecture
+![image](https://github.com/user-attachments/assets/fcf8b80d-70c8-4ec5-a0af-3344d5e87649)
 
+## Dependencies
+| Dependency | Link |
+| ------ | ------ |
+| Packer | https://www.packer.io/ |
+| Terraform | https://www.terraform.io/downloads.html |
+| JMeter |  https://jmeter.apache.org/download_jmeter.cgi|
+| Postman | https://www.postman.com/downloads/ |
+| Python | https://www.python.org/downloads/ |
+| Selenium | https://sites.google.com/a/chromium.org/chromedriver/getting-started |
+ 
 
 ## How to use?
 - Fork this repository to your Github account and clone it locally for further development. 
