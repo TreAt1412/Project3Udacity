@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RESOURCE_GROUP_NAME=Azuredevops
-STORAGE_ACCOUNT_NAME=tstate$RANDOM
+STORAGE_ACCOUNT_NAME=tstateanhdv29
 CONTAINER_NAME=tstate
 LOCATION=eastus
 
