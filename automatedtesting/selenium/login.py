@@ -53,6 +53,4 @@ def login (user, password):
     log.info("Success remove all items from cart")
 
 
-
-
 login('standard_user', 'secret_sauce')
