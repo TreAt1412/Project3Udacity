@@ -26,6 +26,7 @@ variables:
   # Environment name
   environmentName: 'test'
   subscription : ''
+  applicationname : 'webapp-anhdv29'
 
 stages:
 #--------------------------------------------#  
@@ -102,7 +103,7 @@ stages:
   jobs:
     - job: Build
       pool:
-        name: Hosted Ubuntu 1604
+        vmImage: 'ubuntu-18.04'
       steps:
 
         - task: ArchiveFiles@2
@@ -127,8 +128,13 @@ stages:
             archiveType: "zip"
             archiveFile: '$(Build.BuildId)/selenium-tests.zip'
             replaceExistingArchive: true
-        - upload: $(Build.BuildId)/selenium-tests.zip
-          artifact: selenium
+        # - upload: $(Build.BuildId)/selenium-tests.zip
+        #   artifact: selenium
+        - task: PublishPipelineArtifact@1
+          displayName: Upload Selenium
+          inputs:
+           targetPath: '$(Build.BuildId)/selenium-tests.zip'
+           artifact: drop-selenium
 
 - stage: Wait
   jobs:
