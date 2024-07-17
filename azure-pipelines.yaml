@@ -15,7 +15,7 @@ trigger:
 
 # ToDo: Replace the agent pool name, if you are using Udacity Cloud lab. 
 # Otherwise, comment out the line below. 
-pool: myAgentPool
+# pool: myAgentPool
 
 variables:
   python.version: '3.7.6'
@@ -31,9 +31,11 @@ stages:
 #--------------------------------------------#  
 # BUILD STAGE
 #--------------------------------------------#    
-- stage: Build
+- stage: ProvisionIAC
   jobs:
   - job: BuildInfrastructure
+    pool:
+      vmImage: 'ubuntu-18.04'
     steps:
     #--------------------------------------------#  
     # Use Terraform to create the Infrastructure      
@@ -47,20 +49,15 @@ stages:
       displayName: 'Terrafom installation'
       inputs:
         terraformVersion: '1.2.9'
-
+    
     
 
     - task: InstallSSHKey@0
       inputs:
         knownHostsEntry: 'AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBByBaEbrJf+v9agEtM6g/LruTudlDznQ/Dca0BW/awH3/lX26tI/a6kDg90tOCOZIMotbavb3ABKJfkaDvFFGtI='
         sshPublicKey: '$(udacityPubKey)'
-        sshKeySecureFile: 'udacity_id_rsa'
+        sshKeySecureFile: 'id_rsa'
 
-    - task: DownloadSecureFile@1
-      name: udacity_public_key
-      displayName: 'Download Public Key'
-      inputs:
-        secureFile: 'udacity_id_rsa.pub'
     
     # Run Terraform Init on the pipeline agent 
     - task: TerraformTaskV1@0
@@ -75,22 +72,144 @@ stages:
         backendAzureRmContainerName: 'tstate'
         backendAzureRmKey: 'test.terraform.tfstate'
 
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+    - task: TerraformTaskV3@3
       displayName: Terraform validate
       inputs:
         provider: 'azurerm'
         command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: 'AZServiceConnection'
 
-    
+    - task: TerraformTaskV1@0
+      displayName: Terraform Plan
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: 'AZServiceConnection'
     # Run Terraform Apply
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+    - task: TerraformTaskV3@3
       displayName: Terraform apply
       inputs:
         provider: 'azurerm'
         command: 'apply'
+        commandOptions: |
+          -auto-approve
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: 'azureServiceConnection'
  
+- stage: Build
+  jobs:
+    - job: Build
+      pool:
+        name: Hosted Ubuntu 1604
+      steps:
+
+        - task: ArchiveFiles@2
+          displayName: "Archive FakeRestAPI"
+          inputs:
+            rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi"
+            includeRootFolder: false
+            archiveType: "zip"
+            archiveFile: '$(Build.BuildId)-fakerestapi.zip'
+
+        - task: PublishPipelineArtifact@1
+          displayName: "Upload farestapi Package"
+          inputs:
+            targetPath: $(Build.BuildId)-fakerestapi.zip
+            artifactName: drop-fakerestapi
+
+        - task: ArchiveFiles@2
+          displayName: "Archive Selenium UI Tests"
+          inputs:
+            rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
+            includeRootFolder: false
+            archiveType: "zip"
+            archiveFile: '$(Build.BuildId)/selenium-tests.zip'
+            replaceExistingArchive: true
+        - upload: $(Build.BuildId)/selenium-tests.zip
+          artifact: selenium
+
+- stage: Wait
+  jobs:
+    - job: RunsOnServer
+      pool: Server
+      steps:
+      - task: Delay@1
+        inputs:
+          delayForMinutes: '5'
+
+- stage: Deployments
+  displayName: Deployments
+  jobs:
+  - deployment: FakeRestAPIDeploy
+    pool:
+      vmImage: 'Ubuntu-18.04'
+    environment: 'WEBAPP-TEST'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Deploy Azure Web App'
+            inputs:
+              azureSubscription: 'AZServiceConnection'
+              appType: 'webAppLinux'
+              appName: $(applicationname)
+              package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
+              deploymentMethod: 'auto'
+
+  - deployment: VMDeploy
+    displayName: VM Deploy
+    environment:
+      name:  'VM-TEST'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Bash@3
+            displayName: 'Install Dependencies'
+            inputs:
+              targetType: 'inline'
+              script: |
+                #! /bin/bash
+                
+                # sudo apt-get upgrade -y
+                # sudo apt-get install python3-pip -y
+                # sudo apt-get install unzip -y
+                # sudo apt-get install -y chromium-browser
+                # pip3 install selenium
+                
+                # download chrome driver v89
+                FILE=chromedriver_linux64.zip
+                if [ -f "$FILE" ]; then
+                  echo "$FILE exists."
+                else
+                  wget https://chromedriver.storage.googleapis.com/89.0.4389.23/chromedriver_linux64.zip
+                fi
+                # install chrome driver
+                unzip chromedriver_linux64.zip
+                sudo mv chromedriver /usr/bin/chromedriver
+                sudo chown root:root /usr/bin/chromedriver
+                sudo chmod +x /usr/bin/chromedriver
+                chromium-browser -version
+                chromedriver --version
+                # agent log analytics
+                wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sh onboard_agent.sh -w ba2f2875-7939-40f7-8fab-9fdfe5774935 -s rb9iiVdW/SUHbVCH4V83NX16EgaXKTEtX7WfGSxykJ3iCaZ/Tm/FFqigsvOAUajQZM0L5k9vAnyM3lD4Iv61cw==
+                sudo /opt/microsoft/omsagent/bin/service_control restart ba2f2875-7939-40f7-8fab-9fdfe5774935
+          - download: current
+            displayName: 'Download Selenium'
+            artifact: selenium
+          - task: Bash@3
+            displayName: UI Tests
+            inputs:
+              targetType: 'inline'
+              script: |
+                unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
+                sudo mkdir /var/logs
+                python3 uitests.py > ui-logs.log
+                sudo mv ui-logs.log /var/logs
 - stage: Tests
   jobs:
   - job: Integration
