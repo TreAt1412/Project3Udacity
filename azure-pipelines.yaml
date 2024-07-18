@@ -36,16 +36,11 @@ stages:
   jobs:
   - job: BuildInfrastructure
     steps:
-    # --------------------------------------------#  
-    # Use Terraform to create the Infrastructure      
-    # Install Terraform on the pipeline agent 
     - task: TerraformInstaller@0
       displayName: 'Terrafom installation'
       inputs:
         terraformVersion: '1.2.9'
     
-    # Run Terraform Init on the pipeline agent 
-    # ToDo: Replace the resource group name, storage account name, and container name below
     - task: TerraformCLI@1
       displayName: 'Terrafom init'
       inputs: 
@@ -62,40 +57,18 @@ stages:
       displayName: Terraform validate
       inputs:
         command: 'validate'
-
-    # OPTIONAL - This step is needed only if your Terraform VM uses an SSH key pair for login and you want your pipeline agent to connect to it. 
-    # Generate an SSH key pair in your local/AZ Cloud shell. Use the public key in the Terraform VM module. 
-    # Install public key and private key file to the pipeline agent, using the task below. 
-    # ToDo: Change the inputs value below
     - task: InstallSSHKey@0
       inputs:
         knownHostsEntry: 'htnb' # variable value
         sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDpU8He6o8yd6cBKEtoFkgGxgqxIy5abDrtUke+3VJYRu45iK1qIVzL5hH6SaucUbGSKpJeke5p15vfLFKpno9iXowTQGuDBWLw73p49c0E8M+mRjrPAlwGCAlIBF1Wbl5WiaBj1BH15J9FLV93qCs7XlDOVRDhz9ibtQAPzfQEcH8XKjiQaBgKmYKfc1kZ6xSwIg5SxZ0XMPYlY6r7YLsNVx+R+1lqcpB9Q0S8uayl+ewbcizoRJTWJ9z3lbA39PSLqOb+nJ0FyX5HsEnzgWwfyWHyCv88hRuFTpU2yVS8PYYxOincq6/yaz3yqqBG62lON5Z7jbbG9sqCoquMgdVY0g0N9huXscb/whjNbYFrI9OBQHtqWOnqb8N7650y8GVn4ir71J5VTCPlBcx5tE1lz3UexSxj5vmtqUdf1rk0z8JG+h9LktVzHhUF3n0vmn4ctdtpJy4m75+HsVzGpsD8obk/yOBVCktDC+OTe8wZRn3MmgXoJxp3oNBzyd5NtmE= htnb8@HTNB        '            # variable value
-        sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
-    
-    - task: DownloadSecureFile@1
-      name: udacity_public_key
-      displayName: 
-      inputs:
-        secureFile: "id_rsa.pub"
-    
-    # Run Terraform Apply
-    # ToDo: Change the workingDirectory path, as applicable to you
+        sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops
+     
     - task: TerraformCLI@1
       displayName: Terraform apply
       inputs:
         command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test' 
 
-    # ToDo: Change the workingDirectory path, as applicable to you
-    # Destroy the resources in Azure by running a separate pipeline. 
-    # - task: TerraformTaskV3@3
-    #   displayName: Terraform destroy
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'destroy'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-    #     environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 # Build fake app
 - stage: BuildFakeRestAPI
   jobs:
@@ -246,13 +219,13 @@ stages:
                 sudo apt install nodejs npm -y
                 nodejs --version
                 npm install -g newman
-                cd $(Pipeline.Workspace)/postman
-                unzip -o $(Pipeline.Workspace)/postman/$(Build.BuildId)-postman-tests -d .
+                cd $(Pipeline.Workspace)/automatedtesting/postman
+                unzip -o $(Pipeline.Workspace)/automatedtesting/postman/$(Build.BuildId)-postman-tests -d .
           - task: Bash@3
             displayName: Validation Test webapp-anhdv29
             inputs:
-              script:  newman run automatedtesting/postman/Validation_Tests.postman_collection.json \
-                          -e automatedtesting/postman/Validation_Tests_Environment.postman_environment.json \
+              script:  newman run $(Pipeline.Workspace)/automatedtesting/postman/Validation_Tests.postman_collection.json \
+                          -e $(Pipeline.Workspace)/automatedtesting/postman/Validation_Tests_Environment.postman_environment.json \
                           --reporters cli,junit \
                           --reporter-junit-export Results/validationTestReport.xml \
                           --suppress-exit-code
@@ -262,8 +235,8 @@ stages:
           - task: Bash@3
             displayName: Regression Test webapp-anhdv29
             inputs:
-              script: newman run automatedtesting/postman/Regression_Tests.postman_collection.json \
-                     -e automatedtesting/postman/Regression_Tests_Environment.postman_environment.json \
+              script: newman run $(Pipeline.Workspace)/automatedtesting/postman/Regression_Tests.postman_collection.json \
+                     -e $(Pipeline.Workspace)/automatedtesting/postman/Regression_Tests_Environment.postman_environment.json \
                      --reporters cli,junit \
                      --reporter-junit-export Results/regressionTestReport.xml \
                      --suppress-exit-code
@@ -297,13 +270,13 @@ stages:
                 unzip -o $(Pipeline.Workspace)/automatedtesting/jmeter/$(Build.BuildId)-jmeter-tests -d .
           
           - bash: |
-              apache-jmeter-5.4/bin/jmeter -n -t automatedtesting/jmeter/StressTestSuitev2.jmx \
+              apache-jmeter-5.4/bin/jmeter -n -t $(Pipeline.Workspace)/automatedtesting/jmeter/StressTestSuitev2.jmx \
                                           -l log/jmeter/stress-test-result.csv \
                                           -e -f -o log/jmeter/stress-test-html-report \
                                           -j log/jmeter/jmeter-stress-test.log
             displayName: JMeter stress test
           - bash: |
-              apache-jmeter-5.4/bin/jmeter -n -t automatedtesting/jmeter/EnduranceTestSuitev2.jmx \
+              apache-jmeter-5.4/bin/jmeter -n -t $(Pipeline.Workspace)/automatedtesting/jmeter/EnduranceTestSuitev2.jmx \
                                           -l log/jmeter/endurance-test-result.csv \
                                           -e -f -o log/jmeter/endurance-test-html-report \
                                           -j log/jmeter/jmeter-endurance-test.log
