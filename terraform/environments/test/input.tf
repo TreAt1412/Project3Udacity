@@ -19,9 +19,9 @@ variable "admin_username" {
   default     = "udacity"
 }
 
-variable "packer_image" {
-  description = "The ID of the image created by packer tool."
-}
+#variable "packer_image" {
+#  description = "The ID of the image created by packer tool."
+#}
 
 variable "public_key_path" {
   description = "Full path incl. filename to the public key."
