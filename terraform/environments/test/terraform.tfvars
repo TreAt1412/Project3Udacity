@@ -14,7 +14,7 @@ virtual_network_name = "vn-project3"
 address_space = ["10.5.0.0/16"]
 address_prefix_test = "10.5.1.0/24"
 
-packer_image   = "myPackerImage"
+#packer_image   = "myPackerImage"
 admin_username = "udacity"
 
 public_key_path = "~/.ssh/id_rsa.pub"
