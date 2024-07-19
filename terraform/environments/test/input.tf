@@ -23,6 +23,6 @@ variable "admin_username" {
 #  description = "The ID of the image created by packer tool."
 #}
 
-variable "public_key_path" {
-  description = "Full path incl. filename to the public key."
-}
+#variable "public_key_path" {
+#  description = "Full path incl. filename to the public key."
+#}
