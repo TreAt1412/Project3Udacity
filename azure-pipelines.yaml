@@ -127,7 +127,7 @@ stages:
   jobs:
   - job: Build
     pool:
-      vmImage: 'ubuntu-18.04LTS'
+      vmImage: 'ubuntu-18.04'
       name: 'myAgentPool'
     steps:
     - task: ArchiveFiles@2
