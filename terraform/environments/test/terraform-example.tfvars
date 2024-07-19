@@ -17,4 +17,4 @@ address_prefix_test = "10.5.1.0/24"
 #packer_image   = "myPackerImage"
 admin_username = "udacity"
 
-public_key_path = "~/.ssh/id_rsa.pub"
+#public_key_path = "~/.ssh/id_rsa.pub"
