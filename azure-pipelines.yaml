@@ -87,7 +87,7 @@ stages:
   - job: 'BuildFakeapp'
     displayName: 'Build Fake app Rest API'
     pool:
-      name: myAgentPool
+      # name: myAgentPool
       vmImage: 'ubuntu-18.04'
     steps:
     - task: ArchiveFiles@2
@@ -109,7 +109,7 @@ stages:
   - deployment: FakeRestAPI
     pool:
       vmImage: 'Ubuntu-18.04'
-      name: myAgentPool
+      # name: myAgentPool
     environment: 'DEV'
     strategy:
       runOnce:
@@ -129,7 +129,7 @@ stages:
   - job: Build
     pool:
       vmImage: 'ubuntu-18.04'
-      name: 'myAgentPool'
+      # name: 'myAgentPool'
     steps:
     - task: ArchiveFiles@2
       displayName: 'Archive Selenium tests'
@@ -171,7 +171,7 @@ stages:
     displayName: 'UI Tests'
     pool:
       vmImage: 'ubuntu-18.04'
-      name: myAgentPool
+      # name: myAgentPool
     environment:  'TEST'
     strategy:
       runOnce:
