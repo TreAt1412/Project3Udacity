@@ -79,6 +79,8 @@ stages:
       displayName: Terraform apply
       inputs:
         command: 'apply'
+        commandOptions: 
+          -lock=false
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test' 
 
 # Build fake app
