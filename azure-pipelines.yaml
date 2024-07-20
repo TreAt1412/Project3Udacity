@@ -80,14 +80,14 @@ stages:
     #     targetType: 'inline'
     #     script: terraform state push errored.tfstate
     #     workingDirectory: $(System.DefaultWorkingDirectory)/terraform/environments/test
-    - task: TerraformCLI@1
-      displayName: Terraform Destroy
-      inputs:
-        command: 'destroy'
-        commandOptions:
-          -auto-approve
-          -lock=false
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+    # - task: TerraformCLI@1
+    #   displayName: Terraform Destroy
+    #   inputs:
+    #     command: 'destroy'
+    #     commandOptions:
+    #       -auto-approve
+    #       -lock=false
+    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
     - task: TerraformCLI@1
       displayName: Terraform apply
       inputs:
@@ -95,6 +95,11 @@ stages:
         commandOptions: 
           -lock=false
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+      retryCountOnTaskFailure: 3
+      condition: succeededOrFailed()
+    - script: |
+        terraform state push errored.tfstate
+      condition: failed()
 
 # Build fake app
 - stage: BuildFakeRestAPI
