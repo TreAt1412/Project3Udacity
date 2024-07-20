@@ -225,7 +225,7 @@ stages:
           - task: PublishPipelineArtifact@1
             displayName: Publish Selenium Result logs
             inputs:
-              targetPath: '$(Pipeline.Workspace)/drop-uitests/log/selenium/seleniumtestrun.log'
+              targetPath: '$(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log'
               artifactName: 'drop-selenium-logs'
           # ####################################################################
           # #                       Postman  Test                              #
