@@ -27,6 +27,7 @@ variables:
   environmentName: 'test'
   subscription : ''
   applicationname : 'webapp-anhdv29'
+  backendServiceArm : 'AzureServiceConnection'
 
 stages:
 #--------------------------------------------#  
@@ -64,8 +65,8 @@ stages:
     - task: InstallSSHKey@0
       inputs:
         #TODO 
-        knownHostsEntry: 'htnb' # variable value
-        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDpU8He6o8yd6cBKEtoFkgGxgqxIy5abDrtUke+3VJYRu45iK1qIVzL5hH6SaucUbGSKpJeke5p15vfLFKpno9iXowTQGuDBWLw73p49c0E8M+mRjrPAlwGCAlIBF1Wbl5WiaBj1BH15J9FLV93qCs7XlDOVRDhz9ibtQAPzfQEcH8XKjiQaBgKmYKfc1kZ6xSwIg5SxZ0XMPYlY6r7YLsNVx+R+1lqcpB9Q0S8uayl+ewbcizoRJTWJ9z3lbA39PSLqOb+nJ0FyX5HsEnzgWwfyWHyCv88hRuFTpU2yVS8PYYxOincq6/yaz3yqqBG62lON5Z7jbbG9sqCoquMgdVY0g0N9huXscb/whjNbYFrI9OBQHtqWOnqb8N7650y8GVn4ir71J5VTCPlBcx5tE1lz3UexSxj5vmtqUdf1rk0z8JG+h9LktVzHhUF3n0vmn4ctdtpJy4m75+HsVzGpsD8obk/yOBVCktDC+OTe8wZRn3MmgXoJxp3oNBzyd5NtmE= htnb8@HTNB        '            # variable value
+        knownHostsEntry: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=' # variable value
+        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfwLG+GSqYmH9TvB9a81lQBe0/t6K9EJsu4PCFLybfCtW8XMXEt0i2ip08bG2kfcY8ORddOdPjX3wwiaMt3/9kMS62XEGFq4TA/z/IL1FJ2rYk7AyjbMOF5mfwttslajlLhpxJ6OmlXMbPXZjTvZ5tg/3tLK/hWvbVE+ZdlrJVG5z7p9MYcukuG/1/cxa5qiB3CeGmYpZjHv5KBQCAgKFDfx5R0MedPkbWnvSgRPhye/NeNklwVbrJzqCK+kf9sptNCWy+qX/rV2+pj4tBG9Jh5nS0o5AHQZduU+Th4qw9/Ta3doQjtwex8IncIoLPJKb/X/hWgqK9uryEpJl2PmkN dovietanh74@gmail.com'            # variable value
         sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops
 
     - task: Bash@3
@@ -358,7 +359,7 @@ stages:
       displayName: Terraform Init
       inputs:
         command: 'init'
-        backendServiceArm: 'AZServiceConnection'
+        backendServiceArm: '$(backendServiceArm)'
         backendAzureRmResourceGroupName: 'tstate'
         backendAzureRmStorageAccountName: 'tstateanhdv29'
         backendAzureRmContainerName: 'tstate'
