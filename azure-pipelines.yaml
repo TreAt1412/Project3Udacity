@@ -15,7 +15,7 @@ trigger:
 
 # ToDo: Replace the agent pool name, if you are using Udacity Cloud lab. 
 # Otherwise, comment out the line below. 
-# pool: myAgentPool
+pool: MyAgentPool
 
 variables:
   python.version: '3.7.6'
@@ -87,8 +87,7 @@ stages:
   - job: 'BuildFakeapp'
     displayName: 'Build Fake app Rest API'
     pool:
-      # name: myAgentPool
-      vmImage: 'ubuntu-18.04'
+      name: MyAgentPool
     steps:
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
@@ -108,8 +107,8 @@ stages:
   jobs:
   - deployment: FakeRestAPI
     pool:
-      vmImage: 'Ubuntu-18.04'
-      # name: myAgentPool
+      # vmImage: 'Ubuntu-18.04'
+      name: MyAgentPool
     environment: 'DEV'
     strategy:
       runOnce:
@@ -128,8 +127,8 @@ stages:
   jobs:
   - job: Build
     pool:
-      vmImage: 'ubuntu-18.04'
-      # name: 'myAgentPool'
+      # vmImage: 'ubuntu-18.04'
+      name: 'MyAgentPool'
     steps:
     - task: ArchiveFiles@2
       displayName: 'Archive Selenium tests'
@@ -170,8 +169,8 @@ stages:
   - deployment: UITests
     displayName: 'UI Tests'
     pool:
-      vmImage: 'ubuntu-18.04'
-      # name: myAgentPool
+      # vmImage: 'ubuntu-18.04'
+      name: MyAgentPool
     environment:  'TEST'
     strategy:
       runOnce:
