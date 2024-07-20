@@ -295,15 +295,10 @@ stages:
   - job: PostmanTests
     displayName: Postman Tests
     steps: 
-    - task: NodeTool@0
-      displayName: Install Node v16.X
-      inputs:
-        versionSpec: '16.x'
-        checkLatest: true
     - task: CmdLine@2
       displayName: Install Newman
       inputs:
-        script: 'npm install newman'
+        script: 'sudo apt -y install npm && sudo npm install -g newman'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
     - task: CmdLine@2
       displayName: Run Data Validation Tests
