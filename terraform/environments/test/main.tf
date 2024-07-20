@@ -53,7 +53,7 @@ module "publicip" {
   resource_group   = "${module.resource_group.resource_group_name}"
 }
 module "vm" {
-  source          = "./modules/vm"
+  source          = "../..modules/vm"
   name            = "vm-test-automation"
   location        = var.location
   subnet_id       = module.network.subnet_id_test
