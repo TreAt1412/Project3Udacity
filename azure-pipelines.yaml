@@ -81,7 +81,7 @@ stages:
         command: 'apply'
         commandOptions: 
           -lock=false
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test' 
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
 
 # Build fake app
 - stage: BuildFakeRestAPI
