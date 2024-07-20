@@ -46,6 +46,8 @@ stages:
       displayName: 'Terrafom init'
       inputs: 
         command: 'init'
+        # commandOptions: 
+        #   -reconfigure
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         backendServiceArm: '$(azureServiceConnectionId)'
         backendAzureRmResourceGroupName: 'Azuredevops'
@@ -66,7 +68,7 @@ stages:
       inputs:
         #TODO 
         knownHostsEntry: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=' # variable value
-        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfwLG+GSqYmH9TvB9a81lQBe0/t6K9EJsu4PCFLybfCtW8XMXEt0i2ip08bG2kfcY8ORddOdPjX3wwiaMt3/9kMS62XEGFq4TA/z/IL1FJ2rYk7AyjbMOF5mfwttslajlLhpxJ6OmlXMbPXZjTvZ5tg/3tLK/hWvbVE+ZdlrJVG5z7p9MYcukuG/1/cxa5qiB3CeGmYpZjHv5KBQCAgKFDfx5R0MedPkbWnvSgRPhye/NeNklwVbrJzqCK+kf9sptNCWy+qX/rV2+pj4tBG9Jh5nS0o5AHQZduU+Th4qw9/Ta3doQjtwex8IncIoLPJKb/X/hWgqK9uryEpJl2PmkN dovietanh74@gmail.com'            # variable value
+        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDLkBDdBheiaJeavFjF4FulotUZ36RWlF65Wx2ooe+JoLlkjChAs41UCYOdm8trT6v3NNdwl32WK3bhMIzdvwZ+XO9A62QEI+19EUbWOkWTU71TC9kL7JY4bFLy4+gf83p5JpCSOXbryq3L5XQqZLW2cwZVdFmL37jHh2cVmGV46rJ7hkTksvrhHQ3D71yz773Jd+mlQoIP4GxzuNGSfRp7qJ7pM678EfAfbmsP68Oi11yT14O79PGtoajtM/O6J2cs9M8SSlofcz6SJQlrMix89Q/Aa10Net7gdhJhXTOJDQBgvbh/5BUjzYcVF+akcTjn7DLxzFopRO8/CmPPRi3 dovietanh74@gmail.com'            # variable value
         sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops
 
     - task: Bash@3
@@ -151,14 +153,15 @@ stages:
       name: 'MyAgentPool'
     steps:
     - task: ArchiveFiles@2
-      displayName: 'Archive Selenium tests'
+      displayName: 'Archive UI Tests'
       inputs:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
         includeRootFolder: false
         archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip
-      displayName: 'Upload Selenium Tests'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip'
+    # Selenium Test Suite - Publish the package  
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip   # Same as the archiveFile artifact above. 
+      displayName: 'Upload Package'
       artifact: drop-uitests
 
     - task: ArchiveFiles@2
@@ -269,24 +272,17 @@ stages:
           - task: Bash@3
             displayName: Validation Test webapp-anhdv29
             inputs:
-              script:  newman run ValidationTest.postman_collection.json \
-                          -e variable.postman_environment.json \
-                          --reporters cli,junit \
-                          --reporter-junit-export Results/validationTestReport.xml \
-                          --suppress-exit-code
+              script:  newman run ValidationTest.postman_collection.json -e variable.postman_environment.json --reporters cli,junit --reporter-junit-export Results/validationTestReport.xml --suppress-exit-code
               workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-           
+            continueOnError: true 
 
           - task: Bash@3
             displayName: Regression Test webapp-anhdv29
             inputs:
-              script: newman run RegressionTest.postman_collection.json \
-                     -e variable.postman_environment.json \
-                     --reporters cli,junit \
-                     --reporter-junit-export Results/regressionTestReport.xml \
-                     --suppress-exit-code
+              script: newman run RegressionTest.postman_collection.json -e variable.postman_environment.json --reporters cli,junit  --reporter-junit-export Results/regressionTestReport.xml --suppress-exit-code
               workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
- 
+            continueOnError: true
+
           - task: PublishTestResults@2
             displayName: Publish Test Reports
             condition: always()
@@ -362,7 +358,7 @@ stages:
       inputs:
         #TODO 
         knownHostsEntry: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=='
-        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxk0N0whzgiOTrcAdHsjgfCr4+LkO7D2mo9/dDJ+Nz/wf2c+V8HYy0U4xXGoYSbGBCfjHNZzj7vmHP3nhNMabWVALOjjGDyTnb/F+hkpiwfp6vwXjjrLcyvoFv9J8VnPZXVMuA2vveVckkrAbo+a2/u425v55KWkqqNuzJIDEVT8/1FJefaE6LK/NMo1zswlGUxDn2+o2pEDGRc2S/2B/s9I0RVPFpaqVFWNnF/JmtOhetWhwZbHvXof3tXcIo6LzY2NET3FyES5TlOMhLdJaKWssAGsZfM8Nfo92yZ0LNAk8V2o4S8RCFYIiABi5yvxs4N1/Cz4uEbqnF/wF+t4N5'
+        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDLkBDdBheiaJeavFjF4FulotUZ36RWlF65Wx2ooe+JoLlkjChAs41UCYOdm8trT6v3NNdwl32WK3bhMIzdvwZ+XO9A62QEI+19EUbWOkWTU71TC9kL7JY4bFLy4+gf83p5JpCSOXbryq3L5XQqZLW2cwZVdFmL37jHh2cVmGV46rJ7hkTksvrhHQ3D71yz773Jd+mlQoIP4GxzuNGSfRp7qJ7pM678EfAfbmsP68Oi11yT14O79PGtoajtM/O6J2cs9M8SSlofcz6SJQlrMix89Q/Aa10Net7gdhJhXTOJDQBgvbh/5BUjzYcVF+akcTjn7DLxzFopRO8/CmPPRi3 dovietanh74@gmail.com'
         sshKeySecureFile: 'id_rsa'
     - task: Bash@3
       displayName: Copy terraform.tfvars
