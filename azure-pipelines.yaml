@@ -40,7 +40,7 @@ stages:
     - task: TerraformInstaller@0
       displayName: 'Terrafom installation'
       inputs:
-        terraformVersion: '1.2.9'
+        terraformVersion: '1.9.2'
     
     - task: TerraformCLI@1
       displayName: 'Terrafom init'
@@ -74,12 +74,32 @@ stages:
       inputs:
         targetType: 'inline'
         script: cp $(Agent.TempDirectory)/terraform.tfvars $(System.DefaultWorkingDirectory)/terraform/environments/test
-        
+    # - task: Bash@3
+    #   displayName: fix terraform apply
+    #   inputs:
+    #     targetType: 'inline'
+    #     script: terraform state push errored.tfstate
+    #     workingDirectory: $(System.DefaultWorkingDirectory)/terraform/environments/test
+    # - task: TerraformCLI@1
+    #   displayName: Terraform Destroy
+    #   inputs:
+    #     command: 'destroy'
+    #     commandOptions:
+    #       -auto-approve
+    #       -lock=false
+    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
     - task: TerraformCLI@1
       displayName: Terraform apply
       inputs:
         command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test' 
+        commandOptions: 
+          -lock=false
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+      retryCountOnTaskFailure: 3
+      condition: succeededOrFailed()
+    - script: |
+        terraform state push errored.tfstate
+      condition: failed()
 
 # Build fake app
 - stage: BuildFakeRestAPI
@@ -178,7 +198,7 @@ stages:
           steps:
           - download: current
             displayName: Download selenium
-            artifact: selenium 
+            artifact: drop-uitests 
           ####################################################################
           #                       Selenium Test                              #
           ####################################################################
@@ -225,7 +245,7 @@ stages:
           - task: PublishPipelineArtifact@1
             displayName: Publish Selenium Result logs
             inputs:
-              targetPath: '$(Pipeline.Workspace)/drop-uitests/log/selenium/seleniumtestrun.log'
+              targetPath: '$(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log'
               artifactName: 'drop-selenium-logs'
           # ####################################################################
           # #                       Postman  Test                              #
@@ -352,7 +372,7 @@ stages:
     - task: TerraformInstaller@0
       displayName: Install Terraform
       inputs:
-        terraformVersion: '1.2.9'
+        terraformVersion: '1.9.2'
     
     - task: TerraformCLI@1
       displayName: Terraform Init
