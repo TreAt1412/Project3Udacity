@@ -28,7 +28,7 @@ variables:
   subscription : ''
   applicationname : 'webapp-anhdv29'
   backendServiceArm : 'AzureServiceConnection'
-  sshKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBJ2AujK21kZULT48SEvVgGzqjR4nUQj7VvULbWRwwABLiNSwgtoZB1v3bwDcocMI4MpiaQmz4hsKT3/GGurDJmKixCi+bOkycRvb8OepHloEn1I0rYchbgt8GzWGwSTuryaaGlXEpC9PXIZYTeJTgg3P4XNLg68GltnbxQLKkqRSOXGwoKu0tqaxux53hGh1o8e85X8R1Ko7YcXPD6ZjphV8XRi+GilAIWanQF5WcRcro03LNG/DRJaZ9XoVNzRJ/nhAOPo15YgNOe3pQkgWUp3l5xe9GWq0Dxuar7gkxHwiHRvXgeOQPk94hNR93FlwXVtLd1tp/x5qDg2OHcznf dovietanh74@gmail.com'
+  sshKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkNwjzVWi9K0w6LR/dRkIFdldWeROnDlauEj0OfV4YOKSuyMWjdz39VAZRSyIEyGgz2LeIGxX1rNyLbH/1zRQ358vVAEf6xEDTlImBiLr7R64FZmgrSWeauZKW2hhWdRSfJXD9uFKPdJuhdd+SJvIFY76tJe46Foc8jWRvgCQ10MhYwnFaopui+2XHHDtILoP6PDVQkn+P8zvA/le/Uw+/SUHfBVslifijhv4hKP03emqea6Se8dDdD/O6SwRqRYnUVkafa+1nJEaOjAwIQ6xOLc3K7TQA+sZ/oJHtdlGTVnmJKvqx90Be+3haCX1X7BhezrDMcIDlHgwn0NNOqAU7 dovietanh74@gmail.com'
 
 stages:
 #--------------------------------------------#  
