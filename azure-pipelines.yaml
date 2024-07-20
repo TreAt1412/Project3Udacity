@@ -74,13 +74,19 @@ stages:
       inputs:
         targetType: 'inline'
         script: cp $(Agent.TempDirectory)/terraform.tfvars $(System.DefaultWorkingDirectory)/terraform/environments/test
-    - task: Bash@3
-      displayName: fix terraform apply
+    # - task: Bash@3
+    #   displayName: fix terraform apply
+    #   inputs:
+    #     targetType: 'inline'
+    #     script: terraform state push errored.tfstate
+    #     workingDirectory: $(System.DefaultWorkingDirectory)/terraform/environments/test
+    - task: TerraformCLI@1
+      displayName: Terraform Apply
       inputs:
-        targetType: 'inline'
-        script: terraform state push errored.tfstate
-        workingDirectory: $(System.DefaultWorkingDirectory)/terraform/environments/test
-        
+        command: 'destroy'
+        commandOptions: |
+          -auto-approve
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
     - task: TerraformCLI@1
       displayName: Terraform apply
       inputs:
