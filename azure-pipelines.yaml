@@ -153,27 +153,26 @@ stages:
       name: 'MyAgentPool'
     steps:
     - task: ArchiveFiles@2
-      displayName: 'Archive UI Tests'
+      displayName: "Archive Selenium UI Tests"
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
         includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip'
-    # Selenium Test Suite - Publish the package  
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip   # Same as the archiveFile artifact above. 
-      displayName: 'Upload Package'
-      artifact: drop-uitests
+        archiveType: "zip"
+        archiveFile: '$(Build.BuildId)/selenium-tests.zip'
+        replaceExistingArchive: true
+    - upload: $(Build.BuildId)/selenium-tests.zip
+      artifact: selenium
 
-    - task: ArchiveFiles@2
-      displayName: 'Archive Postman tests'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
-      displayName: 'Upload Postman Tests'
-      artifact: postman
+    # - task: ArchiveFiles@2
+    #   displayName: 'Archive Postman tests'
+    #   inputs:
+    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+    #     includeRootFolder: false
+    #     archiveType: 'zip'
+    #     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
+    # - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
+    #   displayName: 'Upload Postman Tests'
+    #   artifact: postman
 
     - task: ArchiveFiles@2
       displayName: 'Archive Jmeter tests'
@@ -210,86 +209,43 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                #! /bin/bash
-                sudo apt-get update -y
-                sudo apt-get upgrade -y
-                sudo apt-get install python3-pip -y
-                sudo apt-get install unzip -y
-                sudo apt-get install -y chromium-browser
-                sudo apt-get install -y chromium-chromedriver
-                pip3 install selenium
-                cd ~/
-                DIR=/home/azuredevops/app
-                if [ ! -d "$DIR" ]; then
-                    mkdir app
-                fi
-                mv $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip app
-                cd app
-                unzip -o $(Build.BuildId)-uitests.zip
-                FILE=/home/azuredevops/app/chromedriver_linux64.zip
-                if [ ! -f "$FILE" ]; then
-                    LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-                    wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
-                    unzip -o chromedriver_linux64.zip
-                    sudo mv chromedriver /usr/bin/chromedriver
-                    sudo chown root:root /usr/bin/chromedriver
-                    sudo chmod +x /usr/bin/chromedriverq
-                fi
-                export PATH=$PATH:/usr/bin/chromedriver
-
-                echo "Starting Selenium Tests"
-                mkdir -p $(Pipeline.Workspace)/drop-uitests/log/selenium
-                python3 login.py > $(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log
-                ls $(Pipeline.Workspace)/drop-uitests/log/selenium
-                echo "Completed Selenium Tests. Check selenium.log for results."
-                sudo cat $(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log
-                sudo mkdir -p /var/log
-                sudo cp $(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log /var/log/selenium.log
-          - task: PublishPipelineArtifact@1
-            displayName: Publish Selenium Result logs
-            inputs:
-              targetPath: '$(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log'
-              artifactName: 'drop-selenium-logs'
-          # ####################################################################
-          # #                       Postman  Test                              #
-          # ####################################################################
+                 # sudo apt-get upgrade -y
+                  # sudo apt-get install python3-pip -y
+                  # sudo apt-get install unzip -y
+                  # sudo apt-get install -y chromium-browser
+                  # pip3 install selenium
+                  
+                  # download chrome driver v89
+                  FILE=chromedriver_linux64.zip
+                  if [ -f "$FILE" ]; then
+                    echo "$FILE exists."
+                  else
+                    wget https://chromedriver.storage.googleapis.com/89.0.4389.23/chromedriver_linux64.zip
+                  fi
+                  # install chrome driver
+                  unzip chromedriver_linux64.zip
+                  sudo mv chromedriver /usr/bin/chromedriver
+                  sudo chown root:root /usr/bin/chromedriver
+                  sudo chmod +x /usr/bin/chromedriver
+                  chromium-browser -version
+                  chromedriver --version
+                  # agent log analytics
+                  wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sh onboard_agent.sh -w ba2f2875-7939-40f7-8fab-9fdfe5774935 -s rb9iiVdW/SUHbVCH4V83NX16EgaXKTEtX7WfGSxykJ3iCaZ/Tm/FFqigsvOAUajQZM0L5k9vAnyM3lD4Iv61cw==
+                  sudo /opt/microsoft/omsagent/bin/service_control restart ba2f2875-7939-40f7-8fab-9fdfe5774935
+          
           - download: current
-            displayName: Download postman
-            artifact: postman
-          - task: NodeTool@0
-            displayName: Install Node v16.X
-            inputs:
-              versionSpec: '16.x'
+            displayName: 'Download Selenium'
+            artifact: selenium
           - task: Bash@3
-            displayName: 'Install newman'
+            displayName: UI Tests
             inputs:
               targetType: 'inline'
               script: |
-                sudo apt install nodejs npm -y
-                nodejs --version
-                npm install -g newman
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
-          - task: CmdLine@2
-            displayName: Run Data Validation Tests
-            continueOnError: true
-            inputs:
-              script: 'newman run ValidationTest.postman_collection.json -e variable.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-
-          - task: CmdLine@2
-            displayName: Regression Test webapp-anhdv29
-            inputs:
-              script: 'newman run RegressionTest.postman_collection.json -e variable.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-            continueOnError: true
-
-          - task: PublishTestResults@2
-            inputs:
-              testResultsFormat: 'JUnit'
-              testResultsFiles: '**/TEST-*.xml'
-              searchFolder: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-              mergeTestResults: true
-              testRunTitle: 'Postman Test Result'
+                unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
+                sudo mkdir /var/logs
+                python3 login.py > ui-logs.log
+                sudo mv ui-logs.log /var/logs
+                 
            
           ###################################################################
           #                     JMeter   Test                              #
@@ -335,7 +291,75 @@ stages:
             inputs:
               targetPath: '$(Pipeline.Workspace)/jmeter/log/jmeter-$(Build.BuildId).zip'
               artifactName: 'drop-jmeter-logs'
+  - job: PostmanTests
+    displayName: Postman Tests
+    steps: 
+    - task: NodeTool@0
+      displayName: Install Node v14.X
+      inputs:
+        versionSpec: '14.x'
+        checkLatest: true
+    - task: CmdLine@2
+      displayName: Install Newman
+      inputs:
+        script: 'npm install newman'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+    - task: CmdLine@2
+      displayName: Run Regression Tests
+      inputs:
+        script: 'newman run automatedtesting/postman/ValidationTest.postman_collection.json -e automatedtesting/postman/variable.postman_environment.json --reporters cli,junit --reporter-junit-export Results/TEST-DataValidation.xml'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+      continueOnError: true
+    - task: CmdLine@2
+      displayName: Run Data Validation Tests
+      inputs:
+        script: 'newman run automatedtesting/postman/RegressionTest.postman_collection.json -e automatedtesting/postman/variable.postman_environment.json --reporters cli,junit --reporter-junit-export Results/TEST-Regression.xml'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+      continueOnError: true
+    - task: PublishTestResults@2
+      displayName: Publish Test Reports
+      condition: always()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/Results/*.xml'
 
+
+- stage: UITests
+  displayName: UI Tests - Selenium
+  jobs:
+  - deployment: VMRunUITests
+    displayName: Run UI Tests
+    environment:
+      name:  'VM-TEST'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            displayName: 'Download Selenium'
+            artifact: selenium
+          - task: Bash@3
+            displayName: Selenium UI Tests
+            inputs:
+              targetType: 'inline'
+              script: |
+                unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
+                sudo mkdir -p /var/log/selenium
+                sudo chmod 664 /var/log/selenium
+                
+                sudo python3 -u python.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
+                # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
+                cd $(System.DefaultWorkingDirectory)
+                mkdir -p log/selenium
+                pwd
+                sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
+                ls -la
+          - task: PublishPipelineArtifact@1
+            displayName: Publish selenium logs
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
+              artifactName: 'drop-selenium-logs'
 
 - stage: DestroyIaC
   displayName: Destroy IaC
