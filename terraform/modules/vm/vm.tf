@@ -23,7 +23,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   network_interface_ids = [azurerm_network_interface.test.id]
   admin_ssh_key {
     username   = var.admin_username
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDLkBDdBheiaJeavFjF4FulotUZ36RWlF65Wx2ooe+JoLlkjChAs41UCYOdm8trT6v3NNdwl32WK3bhMIzdvwZ+XO9A62QEI+19EUbWOkWTU71TC9kL7JY4bFLy4+gf83p5JpCSOXbryq3L5XQqZLW2cwZVdFmL37jHh2cVmGV46rJ7hkTksvrhHQ3D71yz773Jd+mlQoIP4GxzuNGSfRp7qJ7pM678EfAfbmsP68Oi11yT14O79PGtoajtM/O6J2cs9M8SSlofcz6SJQlrMix89Q/Aa10Net7gdhJhXTOJDQBgvbh/5BUjzYcVF+akcTjn7DLxzFopRO8/CmPPRi3 dovietanh74@gmail.com"
+    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZh96qgJ7H+fp6YHH778AccctRGt2TB/welQRNP/RtChkQ6nHxFVP4s7gfbWwzPJLU4KMnTkKTna3GmMDmj7MuFURJRnWTwMhDLZkK4wL97kb2u4/FERZb9c8fERaoMn8HEUyMDeppyYsogD9CAofvzrte+5in/g0gO+YvB3dUfLos4BN+fxHu7mnRtBCwXwH1q4LS3ASmv+IP9kBz9a3FPNYaxmcM8gJZ21ejdIzEHsthqDvNC8X9Dv7akmHflmlp0Tw08d4Ag/X97mRGj7O3qlu6luKIuS9c+68ADXaxbtRTyy4VKshzosVCqzmaLYMubC/5THvT62TVTcHVH9al dovietanh74@gmail.com"
   }
   os_disk {
     caching              = "ReadWrite"
