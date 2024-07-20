@@ -6,7 +6,7 @@ tenant_id = ""
 
 # Resource Group/Location
 location = "eastus"
-resource_group_name = "Azuredevops"
+resource_group = "Azuredevops"
 application_type = "udacity-azure-course-project3-test-app"
 
 # Network
