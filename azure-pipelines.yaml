@@ -200,7 +200,7 @@ stages:
           steps:
           - download: current
             displayName: Download selenium
-            artifact: drop-uitests 
+            artifact: selenium
           ####################################################################
           #                       Selenium Test                              #
           ####################################################################
@@ -302,16 +302,16 @@ stages:
     - task: CmdLine@2
       displayName: Install Newman
       inputs:
-        script: 'npm install newman'
+        script: 'sudo apt -y install npm && sudo npm install -g newman'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
     - task: CmdLine@2
-      displayName: Run Regression Tests
+      displayName: Run Data Validation Tests
       inputs:
         script: 'newman run automatedtesting/postman/ValidationTest.postman_collection.json -e automatedtesting/postman/variable.postman_environment.json --reporters cli,junit --reporter-junit-export Results/TEST-DataValidation.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
       continueOnError: true
     - task: CmdLine@2
-      displayName: Run Data Validation Tests
+      displayName: Run Regression Tests
       inputs:
         script: 'newman run automatedtesting/postman/RegressionTest.postman_collection.json -e automatedtesting/postman/variable.postman_environment.json --reporters cli,junit --reporter-junit-export Results/TEST-Regression.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
@@ -367,7 +367,7 @@ stages:
   - job: Destroy_Azure_IaC
     displayName: Destroy Azure IaC
     pool:
-      vmImage: 'ubuntu-18.04'
+      name: MyAgentPool
     steps:
     - task: DownloadSecureFile@1
       name: tfvardef
