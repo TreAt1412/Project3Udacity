@@ -23,7 +23,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   network_interface_ids = [azurerm_network_interface.test.id]
   admin_ssh_key {
     username   = var.admin_username
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDS88gCj7A1id/VEdaE0BRAGAfXIuue6b+p+/XKMtcuus4O+EIBhk3/A+ddQ60OfOZ/KhHVCy4pHXfkC7IdXJ2AbL2alwFXjWyBNoMvxAz9laleRctzNheR4om+vC+TclzXl8ZOAXlhN8tdUohH/dNrOW2QT+xeIcluobD/qmWCwfi+/OxExdZLQkpw2g3VmeAXhzqnXItKpNUCRgFZhetxBQ+inQE6tVZSIz1U5CiT1apthRPPfNIO3NkpAEC1tSiTfg0HA+6uQUgozwqy5KzvkDcsRkKXp8p7wrPjTAwFxBlxYZ5jdS9ifYFl4WdOfdGey70LOvb7ZzAkI+dITUaP1QRm2m6dbEOp5M0rhFe6UfYXM/3F2tzrFzytv1aktF7aplZY8Jv0moaxmBSs89vRMaYv0B8jSem6few3Jhs7/JNfBP3G5TwFBdrRoyYLF+cXkuQlOzxqHcrw52gu52icw0UMmbUUfV4+ARLUd1EIJ7kikDITWTmWzZSTwoJ6fIc= odl_user@SandboxHost-638570262085077533"
+    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDLkBDdBheiaJeavFjF4FulotUZ36RWlF65Wx2ooe+JoLlkjChAs41UCYOdm8trT6v3NNdwl32WK3bhMIzdvwZ+XO9A62QEI+19EUbWOkWTU71TC9kL7JY4bFLy4+gf83p5JpCSOXbryq3L5XQqZLW2cwZVdFmL37jHh2cVmGV46rJ7hkTksvrhHQ3D71yz773Jd+mlQoIP4GxzuNGSfRp7qJ7pM678EfAfbmsP68Oi11yT14O79PGtoajtM/O6J2cs9M8SSlofcz6SJQlrMix89Q/Aa10Net7gdhJhXTOJDQBgvbh/5BUjzYcVF+akcTjn7DLxzFopRO8/CmPPRi3 dovietanh74@gmail.com"
   }
   os_disk {
     caching              = "ReadWrite"
