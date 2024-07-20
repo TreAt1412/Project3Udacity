@@ -79,6 +79,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: terraform state push errored.tfstate
+        workingDirectory: $(System.DefaultWorkingDirectory)/terraform/environments/test
         
     - task: TerraformCLI@1
       displayName: Terraform apply
