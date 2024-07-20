@@ -194,7 +194,7 @@ stages:
     pool:
       # vmImage: 'ubuntu-18.04'
       name: MyAgentPool
-    environment:  'TEST'
+    environment:  'test'
     strategy:
       runOnce:
         deploy:
@@ -269,26 +269,25 @@ stages:
                 nodejs --version
                 npm install -g newman
               workingDirectory: '$(System.DefaultWorkingDirectory)'
-          - task: Bash@3
-            displayName: Validation Test webapp-anhdv29
+          - task: CmdLine@2
+            displayName: Run Data Validation Tests
+            continueOnError: true
             inputs:
-              script:  newman run ValidationTest.postman_collection.json -e variable.postman_environment.json --reporters cli,junit --reporter-junit-export Results/validationTestReport.xml --suppress-exit-code
+              script: 'newman run ValidationTest.postman_collection.json -e variable.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
               workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-            continueOnError: true 
 
-          - task: Bash@3
+          - task: CmdLine@2
             displayName: Regression Test webapp-anhdv29
             inputs:
-              script: newman run RegressionTest.postman_collection.json -e variable.postman_environment.json --reporters cli,junit  --reporter-junit-export Results/regressionTestReport.xml --suppress-exit-code
+              script: 'newman run RegressionTest.postman_collection.json -e variable.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
               workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
             continueOnError: true
 
           - task: PublishTestResults@2
-            displayName: Publish Test Reports
-            condition: always()
             inputs:
               testResultsFormat: 'JUnit'
-              testResultsFiles: '$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/*.xml'
+              testResultsFiles: '**/TEST-*.xml'
+              searchFolder: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
               mergeTestResults: true
               testRunTitle: 'Postman Test Result'
            
