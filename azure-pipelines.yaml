@@ -40,7 +40,7 @@ stages:
     - task: TerraformInstaller@0
       displayName: 'Terrafom installation'
       inputs:
-        terraformVersion: '1.2.9'
+        terraformVersion: '1.9.2'
     
     - task: TerraformCLI@1
       displayName: 'Terrafom init'
@@ -352,7 +352,7 @@ stages:
     - task: TerraformInstaller@0
       displayName: Install Terraform
       inputs:
-        terraformVersion: '1.2.9'
+        terraformVersion: '1.9.2'
     
     - task: TerraformCLI@1
       displayName: Terraform Init
