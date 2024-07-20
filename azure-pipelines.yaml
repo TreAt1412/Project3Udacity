@@ -84,7 +84,7 @@ stages:
       displayName: Terraform Destroy
       inputs:
         command: 'destroy'
-        commandOptions: |
+        commandOptions:
           -auto-approve
           -lock=false
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
