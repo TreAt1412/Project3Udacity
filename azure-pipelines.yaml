@@ -141,17 +141,6 @@ stages:
     pool:
       # vmImage: 'ubuntu-18.04'
       name: 'MyAgentPool'
-    # steps:
-    # - task: ArchiveFiles@2
-    #   displayName: "Archive Selenium UI Tests"
-    #   inputs:
-    #     rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
-    #     includeRootFolder: false
-    #     archiveType: "zip"
-    #     archiveFile: '$(Build.BuildId)/selenium-tests.zip'
-    #     replaceExistingArchive: true
-    # - upload: $(Build.BuildId)/selenium-tests.zip
-    #   artifact: selenium
   - job: publishSelenium
     displayName: 'Publish Selenium'
     steps:
@@ -196,56 +185,7 @@ stages:
           - download: current
             displayName: Download selenium
             artifact: selenium
-          ####################################################################
-          #                       Selenium Test                              #
-          ####################################################################
-          # - task: Bash@3
-          #   displayName: 'Install Selenium'
-          #   inputs:
-          #     targetType: 'inline'
-          #     script: |
-          #       sudo apt-get update -y
-          #       sudo apt-get install python3-pip -y
-          #       sudo apt-get install unzip -y
-          #       sudo apt-get install -y chromium-browser
-          #       sudo apt-get install -y chromium-chromedriver
-          #       pip3 install selenium==4.7.2
-          #       sudo mkdir -p /var/log/selenium
-          #       sudo chmod 777 /var/log/selenium
-          #       sudo python3 $(Pipeline.Workspace)/selenium/login.py 2>&1 | tee -a /var/log/selenium/selenium.log
-          #       sudo touch /var/log/selenium/selenium.log
-                
-                # # download chrome driver v89
-                # FILE=chromedriver_linux64.zip
-                # if [ -f "$FILE" ]; then
-                #   echo "$FILE exists."
-                # else
-                #   wget https://chromedriver.storage.googleapis.com/89.0.4389.23/chromedriver_linux64.zip
-                # fi
-                # # install chrome driver
-                # unzip chromedriver_linux64.zip
-                # sudo mv chromedriver /usr/bin/chromedriver
-                # sudo chown root:root /usr/bin/chromedriver
-                # sudo chmod +x /usr/bin/chromedriver
-                # chromium-browser -version
-                # chromedriver --version
-                # # agent log analytics
-                # wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sh onboard_agent.sh -w ba2f2875-7939-40f7-8fab-9fdfe5774935 -s rb9iiVdW/SUHbVCH4V83NX16EgaXKTEtX7WfGSxykJ3iCaZ/Tm/FFqigsvOAUajQZM0L5k9vAnyM3lD4Iv61cw==
-                # sudo /opt/microsoft/omsagent/bin/service_control restart ba2f2875-7939-40f7-8fab-9fdfe5774935
           
-          # - download: current
-          #   displayName: 'Download Selenium'
-          # #   artifact: selenium
-          # - task: Bash@3
-          #   displayName: UI Tests
-          #   inputs:
-          #     targetType: 'inline'
-          #     script: |
-          #       unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
-          #       sudo mkdir /var/logs
-          #       python3 login.py > ui-logs.log
-          #       sudo mv ui-logs.log /var/logs
-                 
            
           ###################################################################
           #                     JMeter   Test                              #
@@ -298,16 +238,11 @@ stages:
       inputs:
         versionSpec: '14.x' 
         checkLatest: true
-    - task: Bash@3
-      displayName: 'Install Postman & Newman'
+    - task: CmdLine@2
+      displayName: Install Newman
       inputs:
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
-          pwd
-          sudo snap install postman
-          sudo npm install -g newman
-          sudo npm install newman-reporter-junitfull -g
+        script: 'sudo apt install nodejs && npm install newman'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
     - task: CmdLine@2
       displayName: Run Data Validation Tests
       inputs:
@@ -335,13 +270,13 @@ stages:
         targetType: 'inline'
         script: |
           #! /bin/bash
-          python -m pip install --upgrade pip
-          sudo pip install selenium
-          sudo pip install pytest
-          sudo pip install pytest-html
-          sudo pip install chromedriver-py=96.0.4664.18
-          sudo pip install pytest-xdist
-          sudo pip install pytest-nunit
+          pip3 install --upgrade pip
+          sudo pip3 install selenium
+          sudo pip3 install pytest
+          sudo pip3 install pytest-html
+          sudo pip3 install chromedriver-py=96.0.4664.18
+          sudo pip3 install pytest-xdist
+          sudo pip3 install pytest-nunit
           sudo python3 automatedtesting/selenium/login.py
 
 # - stage: DestroyIaC
