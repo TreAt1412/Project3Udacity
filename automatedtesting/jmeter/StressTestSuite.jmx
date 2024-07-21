@@ -50,7 +50,7 @@
       </HeaderManager>
       <hashTree/>
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV IDs Source" enabled="true">
-        <stringProp name="filename">C:/Users/Anhdv29/Documents/udacity/project 3/jmeter-test-data.csv</stringProp>
+        <stringProp name="filename">/home/azureuser/myagent/_work/1/jmeter/jmeter-test-data.csv</stringProp>
         <stringProp name="fileEncoding"></stringProp>
         <stringProp name="variableNames">id</stringProp>
         <boolProp name="ignoreFirstLine">false</boolProp>
