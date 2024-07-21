@@ -152,16 +152,21 @@ stages:
     pool:
       # vmImage: 'ubuntu-18.04'
       name: 'MyAgentPool'
+    # steps:
+    # - task: ArchiveFiles@2
+    #   displayName: "Archive Selenium UI Tests"
+    #   inputs:
+    #     rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
+    #     includeRootFolder: false
+    #     archiveType: "zip"
+    #     archiveFile: '$(Build.BuildId)/selenium-tests.zip'
+    #     replaceExistingArchive: true
+    # - upload: $(Build.BuildId)/selenium-tests.zip
+    #   artifact: selenium
+  - job: publishSelenium
+    displayName: 'Publish Selenium'
     steps:
-    - task: ArchiveFiles@2
-      displayName: "Archive Selenium UI Tests"
-      inputs:
-        rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
-        includeRootFolder: false
-        archiveType: "zip"
-        archiveFile: '$(Build.BuildId)/selenium-tests.zip'
-        replaceExistingArchive: true
-    - upload: $(Build.BuildId)/selenium-tests.zip
+    - publish: $(System.DefaultWorkingDirectory)/automatedtesting/selenium/login.py
       artifact: selenium
 
     # - task: ArchiveFiles@2
