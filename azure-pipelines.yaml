@@ -276,12 +276,16 @@ stages:
           # pip3 install chromedriver-py=89.0.4389.23
           # pip3 install pytest-xdist
           # pip3 install pytest-nunit
-          sudo apt install python3-selenium
+          sudo apt install python3.12-venv
+          python3 -m venv ~/.myrepo
+          source ~/.myrepo/bin/activate
+          pip3 install selenium
+          pip3 install webdriver-manager
           FILE=chromedriver_linux64.zip
           if [ -f "$FILE" ]; then
             echo "$FILE exists."
           else
-            wget https://chromedriver.storage.googleapis.com/89.0.4389.23/chromedriver_linux64.zip
+            wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
           fi
           # install chrome driver
           unzip chromedriver_linux64.zip
