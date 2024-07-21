@@ -210,42 +210,47 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                # sudo apt-get upgrade -y
-                # sudo apt-get install python3-pip -y
-                # sudo apt-get install unzip -y
-                # sudo apt-get install -y chromium-browser
-                # pip3 install selenium
+                sudo apt-get update -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
+                sudo apt-get install -y chromium-chromedriver
+                pip3 install selenium
+                sudo mkdir -p /var/log/selenium
+                sudo chmod 777 /var/log/selenium
+                sudo python3 $(Pipeline.Workspace)/selenium/login.py 2>&1 | tee -a /var/log/selenium/selenium.log
+                sudo touch /var/log/selenium/selenium.log
                 
-                # download chrome driver v89
-                FILE=chromedriver_linux64.zip
-                if [ -f "$FILE" ]; then
-                  echo "$FILE exists."
-                else
-                  wget https://chromedriver.storage.googleapis.com/89.0.4389.23/chromedriver_linux64.zip
-                fi
-                # install chrome driver
-                unzip chromedriver_linux64.zip
-                sudo mv chromedriver /usr/bin/chromedriver
-                sudo chown root:root /usr/bin/chromedriver
-                sudo chmod +x /usr/bin/chromedriver
-                chromium-browser -version
-                chromedriver --version
-                # agent log analytics
-                wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sh onboard_agent.sh -w ba2f2875-7939-40f7-8fab-9fdfe5774935 -s rb9iiVdW/SUHbVCH4V83NX16EgaXKTEtX7WfGSxykJ3iCaZ/Tm/FFqigsvOAUajQZM0L5k9vAnyM3lD4Iv61cw==
-                sudo /opt/microsoft/omsagent/bin/service_control restart ba2f2875-7939-40f7-8fab-9fdfe5774935
+                # # download chrome driver v89
+                # FILE=chromedriver_linux64.zip
+                # if [ -f "$FILE" ]; then
+                #   echo "$FILE exists."
+                # else
+                #   wget https://chromedriver.storage.googleapis.com/89.0.4389.23/chromedriver_linux64.zip
+                # fi
+                # # install chrome driver
+                # unzip chromedriver_linux64.zip
+                # sudo mv chromedriver /usr/bin/chromedriver
+                # sudo chown root:root /usr/bin/chromedriver
+                # sudo chmod +x /usr/bin/chromedriver
+                # chromium-browser -version
+                # chromedriver --version
+                # # agent log analytics
+                # wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sh onboard_agent.sh -w ba2f2875-7939-40f7-8fab-9fdfe5774935 -s rb9iiVdW/SUHbVCH4V83NX16EgaXKTEtX7WfGSxykJ3iCaZ/Tm/FFqigsvOAUajQZM0L5k9vAnyM3lD4Iv61cw==
+                # sudo /opt/microsoft/omsagent/bin/service_control restart ba2f2875-7939-40f7-8fab-9fdfe5774935
           
-          - download: current
-            displayName: 'Download Selenium'
-            artifact: selenium
-          - task: Bash@3
-            displayName: UI Tests
-            inputs:
-              targetType: 'inline'
-              script: |
-                unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
-                sudo mkdir /var/logs
-                python3 login.py > ui-logs.log
-                sudo mv ui-logs.log /var/logs
+          # - download: current
+          #   displayName: 'Download Selenium'
+          # #   artifact: selenium
+          # - task: Bash@3
+          #   displayName: UI Tests
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
+          #       sudo mkdir /var/logs
+          #       python3 login.py > ui-logs.log
+          #       sudo mv ui-logs.log /var/logs
                  
            
           ###################################################################
@@ -329,42 +334,42 @@ stages:
         testResultsFiles: '$(System.DefaultWorkingDirectory)/Results/*.xml'
 
 
-- stage: UITests
-  displayName: UI Tests - Selenium
-  jobs:
-  - deployment: VMRunUITests
-    displayName: Run UI Tests
-    environment:
-      name:  'VM-TEST'
-      resourceType: VirtualMachine
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            displayName: 'Download Selenium'
-            artifact: selenium
-          - task: Bash@3
-            displayName: Selenium UI Tests
-            inputs:
-              targetType: 'inline'
-              script: |
-                unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
-                sudo mkdir -p /var/log/selenium
-                sudo chmod 664 /var/log/selenium
+# - stage: UITests
+#   displayName: UI Tests - Selenium
+#   jobs:
+#   - deployment: VMRunUITests
+#     displayName: Run UI Tests
+#     environment:
+#       name:  'VM-TEST'
+#       resourceType: VirtualMachine
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - download: current
+#             displayName: 'Download Selenium'
+#             artifact: selenium
+#           - task: Bash@3
+#             displayName: Selenium UI Tests
+#             inputs:
+#               targetType: 'inline'
+#               script: |
+#                 unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
+#                 sudo mkdir -p /var/log/selenium
+#                 sudo chmod 664 /var/log/selenium
                 
-                sudo python3 -u python.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
-                # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
-                cd $(System.DefaultWorkingDirectory)
-                mkdir -p log/selenium
-                pwd
-                sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
-                ls -la
-          - task: PublishPipelineArtifact@1
-            displayName: Publish selenium logs
-            inputs:
-              targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
-              artifactName: 'drop-selenium-logs'
+#                 sudo python3 -u python.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
+#                 # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
+#                 cd $(System.DefaultWorkingDirectory)
+#                 mkdir -p log/selenium
+#                 pwd
+#                 sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
+#                 ls -la
+#           - task: PublishPipelineArtifact@1
+#             displayName: Publish selenium logs
+#             inputs:
+#               targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
+#               artifactName: 'drop-selenium-logs'
 
 - stage: DestroyIaC
   displayName: Destroy IaC
