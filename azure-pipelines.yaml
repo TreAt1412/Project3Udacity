@@ -24,7 +24,7 @@ variables:
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
   # Environment name
-  environmentName: 'test'
+  environmentName: 'DEV'
   subscription : ''
   applicationname : 'webapp-anhdv29'
   backendServiceArm : 'AzureServiceConnection'
@@ -199,7 +199,7 @@ stages:
     pool:
       # vmImage: 'ubuntu-18.04'
       name: MyAgentPool
-    environment:  'test'
+    environment:  'DEV'
     strategy:
       runOnce:
         deploy:
@@ -220,7 +220,7 @@ stages:
                 sudo apt-get install unzip -y
                 sudo apt-get install -y chromium-browser
                 sudo apt-get install -y chromium-chromedriver
-                pip3 install selenium
+                pip3 install selenium==4.7.2
                 sudo mkdir -p /var/log/selenium
                 sudo chmod 777 /var/log/selenium
                 sudo python3 $(Pipeline.Workspace)/selenium/login.py 2>&1 | tee -a /var/log/selenium/selenium.log
