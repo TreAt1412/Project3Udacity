@@ -296,7 +296,7 @@ stages:
     steps: 
     - task: NodeTool@0
       inputs:
-        versionSpec: '16.x' 
+        versionSpec: '14.x' 
         checkLatest: true
     - task: Bash@3
       displayName: 'Install Postman & Newman'
@@ -336,13 +336,13 @@ stages:
         script: |
           #! /bin/bash
           python -m pip install --upgrade pip
-          pip install selenium
-          pip install pytest
-          pip install pytest-html
-          pip install chromedriver-py=96.0.4664.18
-          pip install pytest-xdist
-          pip install pytest-nunit
-          python3 automatedtesting/selenium/login.py
+          sudo pip install selenium
+          sudo pip install pytest
+          sudo pip install pytest-html
+          sudo pip install chromedriver-py=96.0.4664.18
+          sudo pip install pytest-xdist
+          sudo pip install pytest-nunit
+          sudo python3 automatedtesting/selenium/login.py
 
 # - stage: DestroyIaC
 #   displayName: Destroy IaC
