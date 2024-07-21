@@ -236,12 +236,12 @@ stages:
     steps: 
     - task: NodeTool@0
       inputs:
-        versionSpec: '14.x' 
+        versionSpec: '16.x' 
         checkLatest: true
     - task: CmdLine@2
       displayName: Install Newman
       inputs:
-        script: 'sudo apt install nodejs && npm install newman'
+        script: 'npm install -g newman'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
     - task: CmdLine@2
       displayName: Run Data Validation Tests
@@ -269,15 +269,14 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          #! /bin/bash
-          pip3 install --upgrade pip
-          sudo pip3 install selenium
-          sudo pip3 install pytest
-          sudo pip3 install pytest-html
-          sudo pip3 install chromedriver-py=96.0.4664.18
-          sudo pip3 install pytest-xdist
-          sudo pip3 install pytest-nunit
-          sudo python3 automatedtesting/selenium/login.py
+          #! /bin/bash 
+          pip3 install selenium
+          pip3 install pytest
+          pip3 install pytest-html
+          pip3 install chromedriver-py=96.0.4664.18
+          pip3 install pytest-xdist
+          pip3 install pytest-nunit
+          python3 automatedtesting/selenium/login.py
 
 # - stage: DestroyIaC
 #   displayName: Destroy IaC
