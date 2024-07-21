@@ -77,20 +77,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: cp $(Agent.TempDirectory)/terraform.tfvars $(System.DefaultWorkingDirectory)/terraform/environments/test
-    # - task: Bash@3
-    #   displayName: fix terraform apply
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: terraform state push errored.tfstate
-    #     workingDirectory: $(System.DefaultWorkingDirectory)/terraform/environments/test
-    # - task: TerraformCLI@1
-    #   displayName: Terraform Destroy
-    #   inputs:
-    #     command: 'destroy'
-    #     commandOptions:
-    #       -auto-approve
-    #       -lock=false
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+ 
     - task: TerraformCLI@1
       displayName: Terraform apply
       inputs:
@@ -119,6 +106,7 @@ stages:
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+        verbose: true
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
       displayName: 'Upload Package'
       artifact: fakerestapi
@@ -142,8 +130,9 @@ stages:
             inputs:
               azureSubscription: $(azureServiceConnectionId)
               appName: $(applicationname)
-              appType: webApp
+              appType: webAppLinux
               package: $(Pipeline.Workspace)/fakerestapi/$(Build.BuildId)-fakerestapi.zip
+              deploymentMethod: zipDeploy
 
 # Build Test
 - stage: Build_Test
