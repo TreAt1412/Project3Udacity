@@ -17,7 +17,7 @@
           </elementProp>
           <elementProp name="host" elementType="Argument">
             <stringProp name="Argument.name">host</stringProp>
-            <stringProp name="Argument.value">webapp-anhdv29.azurewebsites.net</stringProp>
+            <stringProp name="Argument.value">webapp-anhdv9.azurewebsites.net</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="port" elementType="Argument">

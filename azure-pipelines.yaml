@@ -26,7 +26,7 @@ variables:
   # Environment name
   environmentName: 'DEV'
   subscription : ''
-  applicationname : 'webapp-anhdv29'
+  applicationname : 'webapp-anhdv9'
   backendServiceArm : 'AzureServiceConnection'
   sshKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkNwjzVWi9K0w6LR/dRkIFdldWeROnDlauEj0OfV4YOKSuyMWjdz39VAZRSyIEyGgz2LeIGxX1rNyLbH/1zRQ358vVAEf6xEDTlImBiLr7R64FZmgrSWeauZKW2hhWdRSfJXD9uFKPdJuhdd+SJvIFY76tJe46Foc8jWRvgCQ10MhYwnFaopui+2XHHDtILoP6PDVQkn+P8zvA/le/Uw+/SUHfBVslifijhv4hKP03emqea6Se8dDdD/O6SwRqRYnUVkafa+1nJEaOjAwIQ6xOLc3K7TQA+sZ/oJHtdlGTVnmJKvqx90Be+3haCX1X7BhezrDMcIDlHgwn0NNOqAU7 dovietanh74@gmail.com'
 
