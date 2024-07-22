@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging as log
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 import datetime
 # Start the browser and login with standard_user
@@ -18,20 +19,9 @@ def login (user, password):
     options = ChromeOptions()
     options.add_argument("--headless") 
     options.add_argument("--no-sandbox") 
-    options.add_argument("--disable-dev-shm-usage") 
-    options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2}) 
-    options.add_argument("--no-sandbox") 
-    options.add_argument("--disable-setuid-sandbox") 
-
-    options.add_argument("--remote-debugging-port=9222")  # this
-
-    options.add_argument("--disable-dev-shm-using") 
-    options.add_argument("--disable-extensions") 
-    options.add_argument("start-maximized") 
-    options.add_argument("disable-infobars")
-    options.add_argument(r"user-data-dir=.\cookies\\test") 
-
-    service_obj = Service("/usr/bin/chromedriver")
+    options.add_argument("--disable-dev-shm-usage")  
+    
+    service_obj = Service(ChromeDriverManager(driver_version="126.0.6478.182").install())
     driver = webdriver.Chrome(service= service_obj, options=options)
     
     print( timestamp() + 'Browser started successfully. Navigating to the demo page to login.')
