@@ -1,19 +1,20 @@
 {
 	"info": {
-		"_postman_id": "4ef938dc-c0e4-4312-a6db-76a6d248001c",
-		"name": "ValidationTest1",
+		"_postman_id": "40fd1599-82ac-4227-a649-fae8468e6151",
+		"name": "RegressionTest",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "10996340"
 	},
 	"item": [
 		{
-			"name": "Create comment",
+			"name": "Create book",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Create comment success\", function () { ",
+							"pm.test(\"Create book success\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"success\");",
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
@@ -24,11 +25,8 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
+						"packages": {},
+						"type": "text/javascript"
 					}
 				}
 			],
@@ -37,7 +35,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"postId\": 3,\r\n    \"id\": 12,\r\n    \"name\": \"modi ut eos dolores illum nam dolor\",\r\n    \"email\": \"Oswald.Vandervort@leanne.org\",\r\n    \"body\": \"expedita maiores dignissimos facilis\\nipsum est rem est fugit velit sequi\\neum odio dolores dolor totam\\noccaecati ratione eius rem velit\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -45,25 +43,31 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/{{path}}",
+					"raw": "{{url}}/{{path}}?Book={{book_name}}",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"{{path}}"
+					],
+					"query": [
+						{
+							"key": "Book",
+							"value": "{{book_name}}"
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Get All Comments",
+			"name": "Get All Books",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Get all comments success\", function () {",
+							"pm.test(\"Get all books success\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
@@ -88,13 +92,13 @@
 			"response": []
 		},
 		{
-			"name": "Get Comment By Id",
+			"name": "Get Book By Id",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Get comment by id success\", function () {",
+							"pm.test(\"Get book by id success\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
@@ -120,13 +124,13 @@
 			"response": []
 		},
 		{
-			"name": "Update comment",
+			"name": "Update Book",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Update comment success\", function () {",
+							"pm.test(\"Update book success\", function () {",
 							"    pm.expect(pm.response.text()).to.include(\"success\");",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -151,7 +155,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"postId\": 3,\r\n    \"id\": 12,\r\n    \"name\": \"comment 12 updated\",\r\n    \"email\": \"Oswald.Vandervort@leanne.org\",\r\n    \"body\": \"expedita maiores dignissimos facilis\\nipsum est rem est fugit velit sequi\\neum odio dolores dolor totam\\noccaecati ratione eius rem velit\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -159,20 +163,29 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/{{path}}/{{id}}",
+					"raw": "{{url}}/{{path}}?book={{updated_book_name}}&id={{id}}",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"{{path}}",
-						"{{id}}"
+						"{{path}}"
+					],
+					"query": [
+						{
+							"key": "book",
+							"value": "{{updated_book_name}}"
+						},
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete comment",
+			"name": "Update Book Copy",
 			"event": [
 				{
 					"listen": "test",

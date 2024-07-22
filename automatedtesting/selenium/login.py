@@ -27,7 +27,6 @@ def login (user, password):
 
     options.add_argument("--disable-dev-shm-using") 
     options.add_argument("--disable-extensions") 
-    options.add_argument("--disable-gpu") 
     options.add_argument("start-maximized") 
     options.add_argument("disable-infobars")
     options.add_argument(r"user-data-dir=.\cookies\\test") 
