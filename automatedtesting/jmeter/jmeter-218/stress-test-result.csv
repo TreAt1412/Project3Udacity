@@ -1,0 +1,7 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1721717727658,576,comments all GET,200,OK,Stress Test Suite 1-1,text,true,,158901,170,2,2,https://jsonplaceholder.typicode.com/comments,506,0,481
+1721717728042,195,comments all GET,200,OK,Stress Test Suite 1-2,text,true,,158909,170,2,2,https://jsonplaceholder.typicode.com/comments,121,0,96
+1721717728241,13,comment GET,200,OK,Stress Test Suite 1-2,text,true,,1392,172,2,2,https://jsonplaceholder.typicode.com/comments/1,11,0,0
+1721717728239,14,comment GET,404,Not Found,Stress Test Suite 1-1,text,false,,1103,173,2,2,https://jsonplaceholder.typicode.com/comments/id,12,0,0
+1721717728255,19,comment DELETE,200,OK,Stress Test Suite 1-2,text,true,,1083,194,2,2,https://jsonplaceholder.typicode.com/comments/1,19,0,0
+1721717728257,27,comment DELETE,200,OK,Stress Test Suite 1-1,text,true,,1083,195,1,1,https://jsonplaceholder.typicode.com/comments/id,27,0,0
