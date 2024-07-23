@@ -136,17 +136,6 @@ stages:
     - publish: $(System.DefaultWorkingDirectory)/automatedtesting/selenium/login.py
       artifact: selenium
 
-    # - task: ArchiveFiles@2
-    #   displayName: 'Archive Postman tests'
-    #   inputs:
-    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    #     includeRootFolder: false
-    #     archiveType: 'zip'
-    #     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
-    # - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
-    #   displayName: 'Upload Postman Tests'
-    #   artifact: postman
-
     - task: ArchiveFiles@2
       displayName: 'Archive Jmeter tests'
       inputs:
@@ -192,7 +181,6 @@ stages:
                 sudo apt-get -y install zip
                 sudo apt install -y default-jre
                 sudo apt install -y default-jdk
-                sudo apt-get -y install zip
 
                 wget "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.2.tgz"
                 tar -xf apache-jmeter-5.6.2.tgz
