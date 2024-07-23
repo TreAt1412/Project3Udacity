@@ -13,8 +13,6 @@ trigger:
     - .gitignore
     - images/*
 
-# ToDo: Replace the agent pool name, if you are using Udacity Cloud lab. 
-# Otherwise, comment out the line below. 
 pool: MyAgentPool
 
 variables:
@@ -100,15 +98,14 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
       displayName: 'Upload Package'
       artifact: fakerestapi
-# Deploy fake app
 
+# Deploy fake app
 - stage: DeployFakeApp
   dependsOn: BuildFakeRestAPI
   condition: succeeded()
   jobs:
   - deployment: FakeRestAPI
     pool:
-      # vmImage: 'Ubuntu-18.04'
       name: MyAgentPool
     environment: 'DEV'
     strategy:
@@ -150,17 +147,12 @@ stages:
   - deployment: JmeterTest
     displayName: 'Jmeter Test'
     pool:
-      # vmImage: 'ubuntu-18.04'
       name: MyAgentPool
     environment:  'DEV'
     strategy:
       runOnce:
         deploy:
           steps:
-          # - download: current
-          #   displayName: Download selenium
-          #   artifact: selenium
-          
            
           ###################################################################
           #                     JMeter   Test                              #
@@ -244,34 +236,24 @@ stages:
         targetType: 'inline'
         script: |
           #! /bin/bash 
-          # pip3 install selenium
-          # pip3 install pytest
-          # pip3 install pytest-html
-          # pip3 install chromedriver-py=89.0.4389.23
-          # pip3 install pytest-xdist
-          # pip3 install pytest-nunit
           sudo apt install python3.12-venv
           python3 -m venv ~/.myrepo
           source ~/.myrepo/bin/activate
           pip3 install selenium
           pip3 install webdriver-manager
-          # FILE=chromedriver_linux64.zip
-          # if [ -f "$FILE" ]; then
-          #   echo "$FILE exists."
-          # else
-          #   wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
-          # fi
-          # # install chrome driver
-          # unzip chromedriver_linux64.zip
-          # sudo mv chromedriver /usr/bin/chromedriver
-          # sudo chown root:root /usr/bin/chromedriver
-          # sudo chmod +x /usr/bin/chromedriver
+         
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo dpkg -i google-chrome-stable_current_amd64.deb
           sudo apt-get -f install
           google-chrome --version
           chromedriver --version
-          python3 automatedtesting/selenium/login.py
+          python3 automatedtesting/selenium/login.py > ui-logs.log
+    - task: PublishPipelineArtifact@1
+      displayName: Publish selenium logs
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)/ui-logs.log'
+        artifactName: 'drop-selenium-logs'
+  
 
 # - stage: DestroyIaC
 #   displayName: Destroy IaC
