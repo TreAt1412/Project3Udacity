@@ -1,7 +1,9 @@
-2024-07-23 06:56:43	Starting the browser...
-2024-07-23 06:56:44	Browser started successfully. Navigating to the demo page to login.
-2024-07-23 06:56:45	Success login
-2024-07-23 06:56:45	Starting add items to cart
-2024-07-23 06:56:45	Success add 6 items to cart
-2024-07-23 06:56:45	Starting remove all items from cart
-2024-07-23 06:56:45	Success remove all items from cart
+INFO:root:2024-07-23 20:11:44   Starting the browser...
+INFO:WDM:====== WebDriver manager ======
+INFO:WDM:Driver [/home/treat1412/.wdm/drivers/chromedriver/linux64/126.0.6478.182/chromedriver-linux64/chromedriver] found in cache
+INFO:root:2024-07-23 20:11:45   Browser started successfully. Navigating to the demo page to login.
+INFO:root:2024-07-23 20:11:46   Success login
+INFO:root:2024-07-23 20:11:46   Starting add items to cart
+INFO:root:2024-07-23 20:11:46   Success add 6 items to cart
+INFO:root:2024-07-23 20:11:46   Starting remove all items from cart
+INFO:root:2024-07-23 20:11:46   Success remove all items from cart
