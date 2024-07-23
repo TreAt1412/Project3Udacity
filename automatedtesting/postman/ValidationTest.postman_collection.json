@@ -13,8 +13,14 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"var res = pm.response.json();",
+							"var req = JSON.parse(pm.request.body);",
+							"",
 							"pm.test(\"Create comment success\", function () { ",
-							"    pm.response.to.have.status(200);",
+							"    pm.expect(res.name).to.eql(req.name);",
+							"    pm.expect(res.email).to.eql(req.email);",
+							"    pm.expect(res.body).to.eql(req.body);",
+							"    pm.response.to.have.status(201);",
 							"});"
 						],
 						"type": "text/javascript",
@@ -64,6 +70,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Get all comments success\", function () {",
+							"    pm.expect(500).to.eql(pm.response.json().length);",
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
@@ -94,7 +101,11 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"var id = pm.environment.get(\"id\");",
+							"var res = pm.response.json();",
+							"",
 							"pm.test(\"Get comment by id success\", function () {",
+							"    pm.expect(parseInt(id)).to.eql(res.id);",
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
@@ -126,8 +137,15 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Update comment success\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"success\");",
+							"var res = pm.response.json();",
+							"var req = JSON.parse(pm.request.body);",
+							"var id = pm.environment.get(\"id\");",
+							"",
+							"pm.test(\"Update comment success\", function () { ",
+							"    pm.expect(parseInt(id)).to.eql(res.id);",
+							"    pm.expect(res.name).to.eql(req.name);",
+							"    pm.expect(res.email).to.eql(req.email);",
+							"    pm.expect(res.body).to.eql(req.body);",
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
@@ -179,7 +197,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Delete book success\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"success\");",
+							"    pm.expect(pm.response.text()).to.eql(\"{}\");",
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
