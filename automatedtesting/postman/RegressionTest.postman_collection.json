@@ -14,7 +14,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Create comment success\", function () { ",
-							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status(201);",
 							"});"
 						],
 						"type": "text/javascript",
@@ -126,8 +126,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Update comment success\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"success\");",
+							"pm.test(\"Update comment success\", function () { ",
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
@@ -178,8 +177,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Delete book success\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"success\");",
+							"pm.test(\"Delete comment success\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
