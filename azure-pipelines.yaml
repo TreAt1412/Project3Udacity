@@ -247,7 +247,9 @@ stages:
           sudo apt-get -f install
           google-chrome --version
           chromedriver --version
+          sudo chown <username> /var/log/ui.log
           python3 automatedtesting/selenium/login.py > ui-logs.log
+          python3 automatedtesting/selenium/login.py > /var/log/ui.log
     - task: PublishPipelineArtifact@1
       displayName: Publish selenium logs
       inputs:
