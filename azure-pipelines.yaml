@@ -236,6 +236,8 @@ stages:
         targetType: 'inline'
         script: |
           #! /bin/bash 
+          sudo apt update && sudo apt upgrade
+          sudo apt --fix-broken install
           sudo apt install python3.12-venv
           python3 -m venv ~/.myrepo
           source ~/.myrepo/bin/activate
