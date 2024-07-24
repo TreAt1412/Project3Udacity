@@ -248,7 +248,6 @@ stages:
           sudo dpkg -i google-chrome-stable_current_amd64.deb
           sudo apt-get -f install
           google-chrome --version
-          chromedriver --version
           sudo touch /var/log/ui.log
           sudo chown azureuser /var/log/ui.log
           python3 automatedtesting/selenium/login.py > ui-logs.log
